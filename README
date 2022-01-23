@@ -1,0 +1,59 @@
+(C) 2009 Panavista Technologies, LLC.
+
+Licensed under the Apache License 2.0. See the LICENSE file.
+
+package org.xtrms.regex
+
+*xtrms* is pronounced "extremis".
+
+The pre-built xtrms.jar file is here in the same directory as this README.
+
+Sources and tests are included. To build, use ant: <http://ant.apache.org>.
+Need version 1.7 or so, or later.
+
+You will also need junit: <http://www.junit.org/>
+The xtrms project hasn't been tested with the latest version; still using 3.8.2:
+<http://sourceforge.net/projects/junit/files/junit/3.8.2/junit3.8.2.zip/download>
+
+You have to tell ant where junit is. Two ways: 
+	- define envirionment variable JUNIT_HOME to point to the directory where
+	  junit.jar is found
+	- define an ant property on the ant command line: 
+	  for example, if junit.jar is in /usr/lib/junit_3.8.2, then on the ant 
+	  command line, add
+		-Djunit.home=/usr/lib/junit_3.8.2
+
+Simple running ant in the current directory
+
+	$ ant 
+
+will rebuild the jar, and re-run the tests.
+
+To see a list of build options, run ant with the projecthelp option:
+
+	$ ant -projecthelp
+
+Unicode: there is a text file in the unicode/ directory:
+
+	unicode.txt.zip
+
+This file contains data on unicode categories, blocks, etc. If you need to 
+patch something, unzip it, edit it, and then run the main() method of the
+RegexParser.java class. This will rebuild three pre-built tables of char class
+objects stored in serialized form. There is no need to re-zip the unicode.txt
+file.
+
+Logging: the package uses the standard java logging API to help eliminate
+external dependencies. The logging.properties file is at the top level
+project directory. There is _very_ hacked up XHTML logging option which I've
+not documented yet; it needs to be cleaned up. If you're ambitious, and you
+have ATT's GraphViz installed, you can make very pretty log files. Making
+this less fragile is TODO.
+
+The rest should be self explanatory. (E.g. javadoc is in the doc/ directory).
+
+Project hosting: http:\\code.google.com\p\xtrms
+
+Many thanks to Google for hosting and supporting open source software.
+
+contact: Nick Wade <nicholas.d.wade@gmail.com>, Panavista Technologies LLC.

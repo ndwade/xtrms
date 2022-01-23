@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="xtrms" basedir="." default="build-test-jar">
+
+	<description>
+		Basic build file to build the project jar and the javadoc.
+	</description>
+
+	<property name="foo" value="${ant.home}"/>
+
+    <property name="dist.project" value="xtrms"/>
+	<property name="dist.version" value="pre-alpha" />
+
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="resources.dir" value="${src.dir}/resources" />
+	
+	<property name="test.dir" value="${basedir}/test" />
+	<property name="test.src.dir" value="${test.dir}/src" />
+	<property name="test.build.dir" value="${test.dir}/build" />
+	<property name="test.resources.dir" value="${test.src.dir}/resources" />
+	<property name="test.reports.dir" value="${test.dir}/reports" />
+	
+	<property name="doc.dir" value="${basedir}/doc" />
+	
+	<property environment="env" />
+	<property name="junit.home" value="${env.JUNIT_HOME}" />
+	
+	<path id="build.classpath" /> <!-- intentionally empty: no dependencies! -->
+
+	<path id="test.classpath">
+		<path refid="build.classpath" />
+		<pathelement location="${build.dir}"/>
+		<pathelement location="${junit.home}/junit.jar" />
+	</path>
+	<!--
+		init
+	-->
+	<target name="init">
+		<tstamp>
+		    <format 
+				property="build.tstamp" 
+		    	pattern="MM/dd/yyyy hh:mm aa" />
+		  </tstamp>
+	</target>
+
+	<!--
+		clean
+	-->
+	<target name="clean" 
+			description="deletes all generated files (.class, .jar, .html).">
+		<delete dir="${build.dir}" />
+		<delete dir="${test.build.dir}" />
+		<delete dir="${test.reports.dir}" />
+		<delete file="${dist.project}.jar"/>
+	</target>
+
+	<!--
+		build
+	-->
+	<target name="build" depends="init" 
+			description="compiles class files.">
+		<mkdir dir="${build.dir}"/>
+		<javac 
+			srcdir="${src.dir}"
+			destdir="${build.dir}" 
+			classpathref="build.classpath"/>
+		<copy todir="${build.dir}/resources">
+			<fileset dir="${resources.dir}"></fileset>
+		</copy>
+		<mkdir dir="${test.build.dir}"/>
+		<javac 
+			srcdir="${test.src.dir}"
+			destdir="${test.build.dir}"
+			classpathref="test.classpath" />
+		<copy todir="${test.build.dir}/resources">
+			<fileset dir="${test.resources.dir}"></fileset>
+		</copy>
+	</target>
+
+	<!--
+		test
+	-->
+	<target name="test" depends="build" 
+			description="runs junit tests - to run a single test case (e.g. SomeTestCase), use -Dtest.case=SomeTestCase ">
+		<delete dir="${test.reports.dir}" />
+		<mkdir dir="${test.reports.dir}"/>
+		<junit 
+			fork="yes"
+			forkmode="once"
+			printsummary="true" 
+			failureproperty="test.fail" 
+			errorproperty="test.fail">
+			<classpath>
+				<pathelement location="${test.build.dir}"/>
+				<path refid="test.classpath" />
+			</classpath>
+			<assertions><enable /></assertions>
+			<formatter type="brief" usefile="false" />
+			<formatter type="xml" />
+			<test if="test.case" 
+				name="${test.case}" 
+				todir="${test.reports.dir}" />
+			<batchtest unless="test.case" todir="${test.reports.dir}">
+				<fileset dir="${test.build.dir}" includes="**/AllShort.class" />
+			</batchtest>
+		</junit>
+	</target>
+	
+	<!--
+		test - report
+	-->
+	<target name="test-report" depends="test"
+			description="tests, and generates HTML reports">
+		<junitreport todir="${test.reports.dir}">
+			<fileset dir="${test.reports.dir}" includes="TEST-*.xml" />
+			<report todir="${test.reports.dir}" format="frames" />
+		</junitreport>
+		<fail if="test.fail" 
+			message="!!!--- tests failed - check reports ---!!!" />
+	</target>
+
+	<!--
+		jar
+	-->
+	<target name="jar" depends="build" 
+		description="creates project jar file.">
+		<jar destfile="${dist.project}.jar">
+			<manifest>
+				<attribute
+					name="Package-Title"
+					value="org.xtrms.regex"/>
+				<attribute
+					name="Package-Version"
+					value="${dist.version} built on ${build.tstamp} by ${user.name}"/>
+				<attribute
+					name="Package-Vendor"
+					value="Panavista Technologies LLC"/>
+			</manifest>
+			<fileset dir="${build.dir}" />
+		</jar>
+		<delete dir="${build.dir}" />
+		<delete dir="${test.build.dir}" />
+	</target>
+	
+	<!--
+		clean-doc
+	-->
+	<target name="clean-doc" 
+			description="deletes generated javadoc">
+		<delete dir="${doc.dir}" />
+	</target>
+
+	<!--
+		doc
+	-->
+	<target name="doc" depends="init, clean-doc" 
+			description="creates javadoc files.">
+		<mkdir dir="${doc.dir}" />
+		<javadoc 
+			sourcepath="${src.dir}"
+			destdir="${doc.dir}" 
+			classpathref="build.classpath"
+			packagenames="org.xtrms.regex"
+			source="1.5" 
+			link="http://java.sun.com/j2se/1.5.0/docs/api/"
+            doctitle="&lt;i>${ant.project.name}&lt;/i>"      
+            windowtitle="${ant.project.name}-${dist.version}"
+            header="&lt;b>${ant.project.name}&lt;/b>&lt;br />"      
+			access="public" 
+			author="true"
+			splitindex="true" 
+			use="true" 
+			version="true">
+			<bottom><![CDATA[Copyright &#169; 2009 Panavista Technologies, LLC.]]></bottom>
+		</javadoc>
+	</target>
+
+	<!--
+		default target
+	-->
+	<target name="build-test-jar" depends="clean,test-report,jar,doc" 
+		description="default target.">
+		<!-- dependencies do all the work -->
+	</target>
+
+</project>

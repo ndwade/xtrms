@@ -1,0 +1,55 @@
+	html {
+		margin-left: 5em; 
+		padding: 0px;
+		background-color: mintcream;
+	}
+	body {
+		font: 12px "Century Gothic", verdana, sans-serif;
+		color: black;
+		margin-top: 5em;
+		margin-bottom: 5em;
+	}
+	.title {
+		font-size: larger;
+		font-weight: bold;
+	}
+	table {
+		padding: 5px;
+		border: 1px solid black;
+	}
+	th {
+		padding: 5px;
+		border: 1px solid violet;
+	}
+	td {
+		padding: 5px;
+		border: 1px solid blue;
+	}
+	object {
+		padding: 5px;
+		/* border: 1px solid green; */
+	}
+	.key {
+		text-align: right;
+		background-color: lightgreen;
+	}
+	.val {
+		text-align: center;
+		background-color: lightgray;
+	}
+	.composite {
+		text-align: center;
+		background-color: lightblue;
+	}
+	.empty {
+		background-color: gray;
+	}
+	.caption {
+		align: left;
+		color: blue;
+	}
+	.field {
+		align: left;
+		color: darkred;
+	}
+	
